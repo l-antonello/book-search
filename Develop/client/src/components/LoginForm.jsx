@@ -1,13 +1,11 @@
-// see SignupForm.js for comments
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-
 import { loginUser } from '../utils/API';
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
-  const [validated] = useState(false);
+  const [validated, setValidated] = useState(false); // Add setValidated state
   const [showAlert, setShowAlert] = useState(false);
 
   const handleInputChange = (event) => {
@@ -17,12 +15,14 @@ const LoginForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    
+    // Added setValidated(true) to enable validation feedback
+    setValidated(true);
 
-    // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
+      return; // Return if validation fails
     }
 
     try {
@@ -56,7 +56,7 @@ const LoginForm = () => {
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
-            type='text'
+            type='email' // Use type 'email' for email input
             placeholder='Your email'
             name='email'
             onChange={handleInputChange}
