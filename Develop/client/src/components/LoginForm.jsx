@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { loginUser } from '../utils/API';
+import { useMutation } from '@apollo/client';
+
+import { LOGIN_USER } from '../mutations'; // Import your LOGIN_USER mutation
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
-  const [validated, setValidated] = useState(false); // Add setValidated state
+  const [validated, setValidated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
+  const [loginUserMutation] = useMutation(LOGIN_USER); // Define the mutation function
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -15,25 +19,21 @@ const LoginForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    
-    // Added setValidated(true) to enable validation feedback
     setValidated(true);
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.stopPropagation();
-      return; // Return if validation fails
+      return;
     }
 
     try {
-      const response = await loginUser(userFormData);
+      const { data } = await loginUserMutation({
+        variables: { ...userFormData }, // Pass the form data to the mutation
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      const { token, user } = data.loginUser;
 
-      const { token, user } = await response.json();
-      console.log(user);
       Auth.login(token);
     } catch (err) {
       console.error(err);
@@ -41,7 +41,6 @@ const LoginForm = () => {
     }
 
     setUserFormData({
-      username: '',
       email: '',
       password: '',
     });
@@ -56,7 +55,7 @@ const LoginForm = () => {
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
-            type='email' // Use type 'email' for email input
+            type='email'
             placeholder='Your email'
             name='email'
             onChange={handleInputChange}
