@@ -1,5 +1,6 @@
 # book-search
-# Book Search Engine
+![book search](https://github.com/l-antonello/book-search/assets/122548483/b0c1ef4d-1741-4ecb-ba3d-9ca5cb9a649c)
+
 
 This is a Book Search Engine application that allows users to search for books, create accounts, and save their favorite books.
 
